@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'FindDomain — Brandable domain name generator',
+  title: 'Brandable domain name generator',
   description: 'Generate and check availability of readable, brandable domain names using phonetic patterns.',
 }
 
