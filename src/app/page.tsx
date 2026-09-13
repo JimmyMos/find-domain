@@ -21,6 +21,7 @@ export default function Home() {
   const [minLen, setMinLen] = useState(4)
   const [maxLen, setMaxLen] = useState(7)
   const [count, setCount] = useState(20)
+  const [matchTerm, setMatchTerm] = useState('')
 
   // Advanced settings
   const [showAdvanced, setShowAdvanced] = useState(false)
@@ -56,7 +57,7 @@ export default function Home() {
 
     const effectiveMin = Math.min(minLen, maxLen)
     const effectiveMax = Math.max(minLen, maxLen)
-    const names = generateNames(count, effectiveMin, effectiveMax, activeVowels, activeConsonants)
+    const names = generateNames(count, effectiveMin, effectiveMax, activeVowels, activeConsonants, matchTerm)
     const tldKeys = selectedTlds.map((t) => t.slice(1))
 
     const totalChecks = names.length * selectedTlds.length
@@ -237,6 +238,17 @@ export default function Home() {
                 >
                   {COUNTS.map((n) => <option key={n} value={n}>{n} names</option>)}
                 </select>
+              </div>
+
+              <div>
+                <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">Must contain</p>
+                <input
+                  type="text"
+                  value={matchTerm}
+                  onChange={(e) => setMatchTerm(e.target.value)}
+                  placeholder="e.g. france"
+                  className="bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-600 rounded px-3 py-1.5 text-sm w-36 focus:outline-none focus:border-zinc-500"
+                />
               </div>
 
               <button
