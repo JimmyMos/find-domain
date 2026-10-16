@@ -98,9 +98,10 @@ export function generateNames(
   while (names.size < count && attempts < count * 30) {
     attempts++
     const len = lengths[Math.floor(Math.random() * lengths.length)]
-    const opts = patterns[len] ?? patterns[5]
-    const pattern = opts[Math.floor(Math.random() * opts.length)]
-    const name = fromPattern(pattern, vowels, consonants)
+    const opts = patterns[len]
+    const name = opts
+      ? fromPattern(opts[Math.floor(Math.random() * opts.length)], vowels, consonants)
+      : randomAffix(len, vowels, consonants)
     if (isReadable(name, vowels)) names.add(name)
   }
 

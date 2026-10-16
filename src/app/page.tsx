@@ -5,8 +5,8 @@ import { generateNames, ALL_VOWELS, ALL_CONSONANTS, DEFAULT_CONSONANTS } from '@
 
 const ALL_TLDS = ['.com', '.net', '.org', '.io', '.co', '.app', '.dev', '.ai']
 const COUNTS = [10, 20, 50, 100, 200]
-const MIN_LENGTHS = [3, 4, 5, 6]
-const MAX_LENGTHS = [4, 5, 6, 7, 8]
+const MIN_LENGTHS = [3, 4, 5, 6, 7, 8, 9, 10]
+const MAX_LENGTHS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 
 type AvailStatus = 'available' | 'taken' | 'unknown' | 'checking'
 
@@ -33,6 +33,7 @@ export default function Home() {
   const [results, setResults] = useState<DomainResult[]>([])
   const [checked, setChecked] = useState(0)
   const [total, setTotal] = useState(0)
+  const [copied, setCopied] = useState(false)
 
   const toggleTld = (tld: string) =>
     setSelectedTlds((prev) =>
@@ -149,6 +150,22 @@ export default function Home() {
   const availableCount = results.filter((r) =>
     Object.values(r.tlds).some((s) => s === 'available')
   ).length
+
+  const copyAvailableAsCsv = async () => {
+    const rows = ['domain']
+    for (const r of results) {
+      for (const [tld, status] of Object.entries(r.tlds)) {
+        if (status === 'available') rows.push(`${r.name}${tld}`)
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(rows.join('\n'))
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (e) {
+      console.error('[client] clipboard error:', e)
+    }
+  }
 
   const progress = total > 0 ? Math.round((checked / total) * 100) : 0
 
@@ -377,12 +394,22 @@ export default function Home() {
                 }
               </p>
               {phase === 'done' && (
-                <button
-                  onClick={generate}
-                  className="text-xs text-zinc-500 hover:text-zinc-300 border border-zinc-700 hover:border-zinc-500 px-3 py-1 rounded transition-colors"
-                >
-                  Regenerate
-                </button>
+                <div className="flex items-center gap-2">
+                  {availableCount > 0 && (
+                    <button
+                      onClick={copyAvailableAsCsv}
+                      className="text-xs text-zinc-500 hover:text-zinc-300 border border-zinc-700 hover:border-zinc-500 px-3 py-1 rounded transition-colors"
+                    >
+                      {copied ? 'Copied!' : 'Copy available (CSV)'}
+                    </button>
+                  )}
+                  <button
+                    onClick={generate}
+                    className="text-xs text-zinc-500 hover:text-zinc-300 border border-zinc-700 hover:border-zinc-500 px-3 py-1 rounded transition-colors"
+                  >
+                    Regenerate
+                  </button>
+                </div>
               )}
             </div>
 
